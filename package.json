@@ -1,6 +1,6 @@
 {
-  "name": "puppeteer-core",
-  "version": "22.15.0",
+  "name": "puppeteer-core-patch",
+  "version": "1.0.1",
   "description": "A high-level API to control headless Chrome over the DevTools Protocol",
   "keywords": [
     "puppeteer",
@@ -29,18 +29,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/puppeteer/puppeteer/tree/main/packages/puppeteer-core"
+    "url": "https://github.com/zfcsoftware/puppeteer-core-patch"
   },
   "engines": {
     "node": ">=18"
   },
   "scripts": {
-    "build:docs": "wireit",
-    "build": "wireit",
-    "check": "tsx tools/ensure-correct-devtools-protocol-package",
-    "clean": "../../tools/clean.mjs",
-    "prepack": "wireit",
-    "unit": "wireit"
+
   },
   "wireit": {
     "prepack": {
@@ -127,12 +122,14 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@types/chrome": "0.0.269",
     "@types/debug": "4.1.12",
     "@types/node": "18.17.15",
-    "@types/chrome": "0.0.269",
     "@types/ws": "8.5.11",
     "mitt": "3.0.1",
     "parsel-js": "1.1.2",
-    "rxjs": "7.8.1"
+    "rxjs": "7.8.1",
+    "tsx": "^4.17.0",
+    "wireit": "^0.14.8"
   }
 }
