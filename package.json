@@ -1,178 +1,138 @@
 {
-  "name": "puppeteer-repo",
-  "private": true,
+  "name": "puppeteer-core",
+  "version": "22.15.0",
+  "description": "A high-level API to control headless Chrome over the DevTools Protocol",
+  "keywords": [
+    "puppeteer",
+    "chrome",
+    "headless",
+    "automation"
+  ],
+  "type": "commonjs",
+  "main": "./lib/cjs/puppeteer/puppeteer-core.js",
+  "types": "./lib/types.d.ts",
+  "browser": "./lib/esm/puppeteer/puppeteer-core-browser.js",
+  "exports": {
+    ".": {
+      "types": "./lib/types.d.ts",
+      "import": "./lib/esm/puppeteer/puppeteer-core.js",
+      "require": "./lib/cjs/puppeteer/puppeteer-core.js"
+    },
+    "./internal/*": {
+      "import": "./lib/esm/puppeteer/*",
+      "require": "./lib/cjs/puppeteer/*"
+    },
+    "./*": {
+      "import": "./*",
+      "require": "./*"
+    }
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/puppeteer/puppeteer"
+    "url": "https://github.com/puppeteer/puppeteer/tree/main/packages/puppeteer-core"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "scripts": {
+    "build:docs": "wireit",
     "build": "wireit",
-    "build:tools": "wireit",
-    "check": "npm run check --workspaces --if-present",
-    "clean": "npm run clean --workspaces --if-present",
-    "debug": "mocha --inspect-brk",
-    "docs": "wireit",
-    "doctest": "wireit",
-    "format": "run-s format:*",
-    "format:eslint": "eslint --ext js --ext mjs --ext ts --fix .",
-    "format:expectations": "node tools/sort-test-expectations.mjs",
-    "format:prettier": "prettier --write .",
-    "lint": "run-s lint:*",
-    "lint:eslint": "eslint --ext js --ext mjs --ext ts .",
-    "lint:prettier": "prettier --check .",
-    "lint:expectations": "node tools/sort-test-expectations.mjs --lint",
-    "postinstall": "npm run postinstall --workspaces --if-present",
-    "prepare": "npm run prepare --workspaces --if-present",
-    "test": "wireit",
-    "test-install": "npm run test --workspace @puppeteer-test/installation",
-    "test-types": "wireit",
-    "test:chrome": "wireit",
-    "test:chrome:bidi": "wireit",
-    "test:chrome:headful": "wireit",
-    "test:chrome:headless": "wireit",
-    "test:chrome:shell": "wireit",
-    "test:firefox": "wireit",
-    "test:firefox:headful": "wireit",
-    "test:firefox:headless": "wireit",
-    "test:firefox:cdp": "wireit",
-    "validate-licenses": "tsx tools/third_party/validate-licenses.ts",
-    "unit": "npm run unit --workspaces --if-present"
+    "check": "tsx tools/ensure-correct-devtools-protocol-package",
+    "clean": "../../tools/clean.mjs",
+    "prepack": "wireit",
+    "unit": "wireit"
   },
   "wireit": {
+    "prepack": {
+      "command": "tsx ../../tools/cp.ts ../../README.md README.md",
+      "files": [
+        "../../README.md"
+      ],
+      "output": [
+        "README.md"
+      ]
+    },
     "build": {
       "dependencies": [
-        "./packages/browsers:build",
-        "./packages/ng-schematics:build",
-        "./packages/puppeteer-core:build",
-        "./packages/puppeteer:build",
-        "./packages/testserver:build",
-        "./test:build",
-        "./test/installation:build",
-        "build:tools"
+        "build:tsc",
+        "build:types"
       ]
     },
-    "build:tools": {
+    "build:docs": {
+      "command": "api-extractor run --local --config \"./api-extractor.docs.json\"",
+      "files": [
+        "api-extractor.docs.json",
+        "lib/esm/puppeteer/puppeteer-core.d.ts",
+        "tsconfig.json"
+      ],
       "dependencies": [
-        "./tools/docgen:build",
-        "./tools/doctest:build",
-        "./tools/mocha-runner:build",
-        "./tools/eslint:build",
-        "./packages/testserver:build"
+        "build:tsc"
       ]
     },
-    "docs": {
-      "command": "hereby docs",
+    "build:tsc": {
+      "command": "hereby build",
+      "clean": "if-file-deleted",
       "dependencies": [
-        "./packages/browsers:build:docs",
-        "./packages/puppeteer:build:docs",
-        "./packages/puppeteer-core:build:docs",
-        "./tools/docgen:build"
+        "../browsers:build"
+      ],
+      "files": [
+        "{src,third_party}/**",
+        "../../versions.js",
+        "!src/generated",
+        "Herebyfile.mjs"
+      ],
+      "output": [
+        "lib/{cjs,esm}/**"
       ]
     },
-    "doctest": {
-      "command": "npx ./tools/doctest 'packages/puppeteer-core/lib/esm/**/*.js'",
+    "build:types": {
+      "command": "api-extractor run --local && eslint --cache-location .eslintcache --cache --ext=ts --no-ignore --no-eslintrc -c=../../.eslintrc.types.cjs --fix lib/types.d.ts",
+      "files": [
+        "../../.eslintrc.types.cjs",
+        "api-extractor.json",
+        "lib/esm/puppeteer/types.d.ts",
+        "tsconfig.json"
+      ],
+      "output": [
+        "lib/types.d.ts"
+      ],
       "dependencies": [
-        "./packages/puppeteer-core:build",
-        "./tools/doctest:build"
+        "build:tsc"
       ]
     },
-    "test:chrome": {
+    "unit": {
+      "command": "node --test --test-reporter spec lib/cjs",
       "dependencies": [
-        "test:chrome:bidi",
-        "test:chrome:headful",
-        "test:chrome:headless",
-        "test:chrome:shell"
-      ]
-    },
-    "test:chrome:bidi": {
-      "command": "npm test -- --test-suite chrome-bidi"
-    },
-    "test:chrome:headful": {
-      "command": "npm test -- --test-suite chrome-headful"
-    },
-    "test:chrome:headless": {
-      "command": "npm test -- --test-suite chrome-headless"
-    },
-    "test:chrome:shell": {
-      "command": "npm test -- --test-suite chrome-headless-shell"
-    },
-    "test:firefox:cdp": {
-      "command": "npm test -- --test-suite firefox-cdp"
-    },
-    "test:firefox:headful": {
-      "command": "npm test -- --test-suite firefox-headful"
-    },
-    "test:firefox:headless": {
-      "command": "npm test -- --test-suite firefox-headless"
-    },
-    "test:firefox": {
-      "dependencies": [
-        "test:firefox:headful",
-        "test:firefox:headless",
-        "test:firefox:cdp"
-      ]
-    },
-    "test": {
-      "command": "npx ./tools/mocha-runner --min-tests 1003",
-      "dependencies": [
-        "./test:build",
-        "./tools/mocha-runner:build"
-      ]
-    },
-    "test-types": {
-      "command": "tsd -t packages/puppeteer",
-      "dependencies": [
-        "./packages/puppeteer:build"
+        "build"
       ]
     }
+  },
+  "files": [
+    "lib",
+    "src",
+    "!*.test.ts",
+    "!*.test.js",
+    "!*.test.d.ts",
+    "!*.test.js.map",
+    "!*.test.d.ts.map",
+    "!*.tsbuildinfo"
+  ],
+  "author": "The Chromium Authors",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@puppeteer/browsers": "2.3.0",
+    "chromium-bidi": "0.6.3",
+    "debug": "^4.3.6",
+    "devtools-protocol": "0.0.1312386",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
-    "@actions/core": "1.10.1",
-    "@types/mocha": "10.0.7",
-    "@types/node": "20.8.4",
-    "@types/semver": "7.5.8",
-    "@types/sinon": "17.0.3",
-    "@typescript-eslint/eslint-plugin": "7.18.0",
-    "@typescript-eslint/parser": "7.18.0",
-    "esbuild": "0.23.1",
-    "eslint": "8.57.0",
-    "eslint-config-prettier": "9.1.0",
-    "eslint-import-resolver-typescript": "3.6.1",
-    "eslint-plugin-import": "2.29.1",
-    "eslint-plugin-mocha": "10.5.0",
-    "eslint-plugin-prettier": "5.2.1",
-    "eslint-plugin-rulesdir": "0.2.2",
-    "eslint-plugin-tsdoc": "0.3.0",
-    "eslint-plugin-unused-imports": "3.2.0",
-    "execa": "9.3.1",
-    "expect": "29.7.0",
-    "gts": "5.3.1",
-    "hereby": "1.9.0",
-    "license-checker": "25.0.1",
-    "mocha": "10.7.3",
-    "npm-run-all2": "6.2.2",
-    "prettier": "3.3.3",
-    "semver": "7.6.3",
-    "sinon": "18.0.0",
-    "source-map-support": "0.5.21",
-    "spdx-satisfies": "5.0.1",
-    "tsd": "0.31.1",
-    "tsx": "4.17.0",
-    "typescript": "5.4.5",
-    "wireit": "0.14.7"
-  },
-  "overrides": {
-    "@microsoft/api-extractor": {
-      "typescript": "$typescript"
-    }
-  },
-  "workspaces": [
-    "packages/*",
-    "test",
-    "test/installation",
-    "tools/eslint",
-    "tools/doctest",
-    "tools/docgen",
-    "tools/mocha-runner"
-  ]
+    "@types/debug": "4.1.12",
+    "@types/node": "18.17.15",
+    "@types/chrome": "0.0.269",
+    "@types/ws": "8.5.11",
+    "mitt": "3.0.1",
+    "parsel-js": "1.1.2",
+    "rxjs": "7.8.1"
+  }
 }

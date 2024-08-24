@@ -1,29 +1,13 @@
 # Puppeteer
 
-[![build](https://github.com/puppeteer/puppeteer/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/puppeteer/puppeteer/actions/workflows/ci.yml)
-[![npm puppeteer package](https://img.shields.io/npm/v/puppeteer.svg)](https://npmjs.org/package/puppeteer)
+Puppeteer core patched with rebrowser.
 
-<img src="https://user-images.githubusercontent.com/10379601/29446482-04f7036a-841f-11e7-9872-91d1fc2ea683.png" height="200" align="right"/>
-
-> Puppeteer is a JavaScript library which provides a high-level API to control
-> Chrome or Firefox over the
-> [DevTools Protocol](https://chromedevtools.github.io/devtools-protocol/) or [WebDriver BiDi](https://pptr.dev/webdriver-bidi).
-> Puppeteer runs in the headless (no visible UI) by default
-
-## [Get started](https://pptr.dev/docs) | [API](https://pptr.dev/api) | [FAQ](https://pptr.dev/faq) | [Contributing](https://pptr.dev/contributing) | [Troubleshooting](https://pptr.dev/troubleshooting)
-
-## Installation
-
-```bash npm2yarn
-npm i puppeteer # Downloads compatible Chrome during installation.
-npm i puppeteer-core # Alternatively, install as a library, without downloading Chrome.
+```bash
+npm i puppeteer-core-patch
 ```
 
-## Example
-
-```ts
-import puppeteer from 'puppeteer';
-// Or import puppeteer from 'puppeteer-core';
+```js
+import puppeteer from 'puppeteer-core-patch';
 
 // Launch the browser and open a new blank page
 const browser = await puppeteer.launch();
