@@ -12,7 +12,7 @@ import puppeteer from 'puppeteer-core-patch';
 // Launch the browser and open a new blank page
 const browser = await puppeteer.launch();
 const page = await browser.newPage();
-
+process.env.REBROWSER_PATCHES_RUNTIME_FIX_MODE = "alwaysIsolated"
 // Navigate the page to a URL.
 await page.goto('https://developer.chrome.com/');
 
