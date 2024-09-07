@@ -1,6 +1,6 @@
 {
   "name": "puppeteer-core-patch",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A high-level API to control headless Chrome over the DevTools Protocol",
   "keywords": [
     "puppeteer",
@@ -35,7 +35,7 @@
     "node": ">=18"
   },
   "scripts": {
-
+ 
   },
   "wireit": {
     "prepack": {
@@ -115,21 +115,20 @@
   "author": "The Chromium Authors",
   "license": "Apache-2.0",
   "dependencies": {
-    "@puppeteer/browsers": "2.3.0",
-    "chromium-bidi": "0.6.3",
+    "@puppeteer/browsers": "2.3.1",
+    "chromium-bidi": "0.6.5",
     "debug": "^4.3.6",
-    "devtools-protocol": "0.0.1312386",
+    "devtools-protocol": "0.0.1330662",
+    "typed-query-selector": "^2.12.0",
     "ws": "^8.18.0"
   },
   "devDependencies": {
-    "@types/chrome": "0.0.269",
+    "@types/chrome": "0.0.270",
     "@types/debug": "4.1.12",
     "@types/node": "18.17.15",
-    "@types/ws": "8.5.11",
+    "@types/ws": "8.5.12",
     "mitt": "3.0.1",
     "parsel-js": "1.1.2",
-    "rxjs": "7.8.1",
-    "tsx": "^4.17.0",
-    "wireit": "^0.14.8"
+    "rxjs": "7.8.1"
   }
 }

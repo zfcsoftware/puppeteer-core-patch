@@ -1,6 +1,6 @@
 # Puppeteer
 
-Puppeteer core patched with rebrowser.
+Puppeteer core patched with rebrowser. https://github.com/rebrowser/rebrowser-patches
 
 ```bash
 npm i puppeteer-core-patch

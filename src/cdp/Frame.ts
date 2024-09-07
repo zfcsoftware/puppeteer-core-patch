@@ -136,10 +136,6 @@ export class CdpFrame extends Frame {
     return this._frameManager.page();
   }
 
-  override isOOPFrame(): boolean {
-    return this.#client !== this._frameManager.client;
-  }
-
   @throwIfDetached
   override async goto(
     url: string,
@@ -321,17 +317,13 @@ export class CdpFrame extends Frame {
   }
 
   #deviceRequestPromptManager(): DeviceRequestPromptManager {
-    const rootFrame = this.page().mainFrame();
-    if (this.isOOPFrame() || rootFrame === null) {
-      return this._frameManager._deviceRequestPromptManager(this.#client);
-    } else {
-      return rootFrame._frameManager._deviceRequestPromptManager(this.#client);
-    }
+    return this._frameManager._deviceRequestPromptManager(this.#client);
   }
 
   @throwIfDetached
   async addPreloadScript(preloadScript: CdpPreloadScript): Promise<void> {
-    if (!this.isOOPFrame() && this !== this._frameManager.mainFrame()) {
+    const parentFrame = this.parentFrame();
+    if (parentFrame && this.#client === parentFrame.client) {
       return;
     }
     if (preloadScript.getIdForFrame(this)) {

@@ -443,10 +443,11 @@ export class FrameManager extends EventEmitter<FrameManagerEvents> {
   ): void {
     let frame = this.frame(frameId);
     if (frame) {
-      if (session && frame.isOOPFrame()) {
-        // If an OOP iframes becomes a normal iframe again
-        // it is first attached to the parent page before
-        // the target is removed.
+      const parentFrame = this.frame(parentFrameId);
+      if (session && parentFrame && frame.client !== parentFrame?.client) {
+        // If an OOP iframes becomes a normal iframe
+        // again it is first attached to the parent frame before the
+        // target is removed.
         frame.updateClient(session);
       }
       return;
@@ -536,21 +537,25 @@ export class FrameManager extends EventEmitter<FrameManagerEvents> {
               worldName: name,
               grantUniveralAccess: true,
             })
-            .catch(debugError)
-            .then(({ executionContextId }: any) => {
+            .then((createIsolatedWorldResult: any) => {
               // rebrowser-patches: save created context id
               if (!process.env['REBROWSER_PATCHES_RUNTIME_FIX_MODE']) {
                 return
               }
+              if (!createIsolatedWorldResult?.executionContextId) {
+                // probably "Target closed" error, just ignore it
+                return
+              }
               // @ts-ignore
               this.#onExecutionContextCreated({
-                id: executionContextId,
+                id: createIsolatedWorldResult.executionContextId,
                 name,
                 auxData: {
                   frameId: frame._id,
                 }
               }, frame.client)
-            });
+            })
+            .catch(debugError);
         })
     );
 
